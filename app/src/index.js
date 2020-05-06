@@ -11,9 +11,9 @@ const App = () => (
   <Layout>
     <Navbar />
     <SubNavbar />
-    <CardList>
-      <Card />
-    </CardList>
+    <CardList />
+    {/* <Card />
+    </CardList> */}
   </Layout>
 )
 

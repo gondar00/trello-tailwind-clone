@@ -1,3 +1,5 @@
+import React from 'react'
+
 export default ({ children }) => (
   <div className='flex p-2 bg-blue-dark items-center'>
     <div className='hidden md:flex justify-start'>
