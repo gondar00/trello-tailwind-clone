@@ -1,3 +1,5 @@
+import React from 'react'
+
 export default ({ children }) => (
   <div className='flex m-4 justify-between'>
     <div className='flex'>
