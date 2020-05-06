@@ -1,120 +1,167 @@
 import React from 'react';
-import { Motion, spring } from 'react-motion';
+import Card from './card'
 
-const range = (end, start = 1) => Array.from(
-  Array(Math.abs(end - start) + 1),
-  (_, i) => start + i
-);
-
-function reinsert(arr, from, to) {
-  const _arr = arr.slice(0);
-  const val = _arr[from];
-  _arr.splice(from, 1);
-  _arr.splice(to, 0, val);
-  return _arr;
-}
-
-function clamp(n, min, max) {
-  return Math.max(Math.min(n, max), min);
-}
-
-const springConfig = { stiffness: 300, damping: 50 };
-const itemsCount = 4;
-
-export default class CardList extends React.Component {
+class CardList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      topDeltaY: 0,
-      mouseY: 0,
-      isPressed: false,
-      originalPosOfLastPressed: 0,
-      order: range(itemsCount),
-    };
-  };
-
-  componentDidMount() {
-    window.addEventListener('touchmove', this.handleTouchMove);
-    window.addEventListener('touchend', this.handleMouseUp);
-    window.addEventListener('mousemove', this.handleMouseMove);
-    window.addEventListener('mouseup', this.handleMouseUp);
-  };
-
-  handleTouchStart = (key, pressLocation, e) => {
-    this.handleMouseDown(key, pressLocation, e.touches[0]);
-  };
-
-  handleTouchMove = (e) => {
-    e.preventDefault();
-    this.handleMouseMove(e.touches[0]);
-  };
-
-  handleMouseDown = (pos, pressY, { pageY }) => {
-    this.setState({
-      topDeltaY: pageY - pressY,
-      mouseY: pressY,
-      isPressed: true,
-      originalPosOfLastPressed: pos,
-    });
-  };
-
-  handleMouseMove = ({ pageY }) => {
-    const { isPressed, topDeltaY, order, originalPosOfLastPressed } = this.state;
-
-    if (isPressed) {
-      const mouseY = pageY - topDeltaY;
-      const currentRow = clamp(Math.round(mouseY / 100), 0, itemsCount - 1);
-      let newOrder = order;
-
-      if (currentRow !== order.indexOf(originalPosOfLastPressed)) {
-        newOrder = reinsert(order, order.indexOf(originalPosOfLastPressed), currentRow);
-      }
-
-      this.setState({ mouseY: mouseY, order: newOrder });
+      todos: [
+        {
+          id: 1,
+          task: 'Todo-1'
+        }
+      ],
+      ongoing: [
+        {
+          id: 2,
+          task: 'Todo-2'
+        }
+      ],
+      completed: [
+        {
+          id: 3,
+          task: 'Todo-3'
+        }
+      ],
+      draggedTodoKey: '',
+      draggedTodo: {}
     }
-  };
+  }
 
-  handleMouseUp = () => {
-    this.setState({ isPressed: false, topDeltaY: 0 });
-  };
+  onDrag = (event, todo, key) => {
+    event.preventDefault();
+    this.setState({
+      draggedTodoKey: key,
+      draggedTodo: todo
+    });
+  }
+
+  onDragOver = (event) => {
+    event.preventDefault();
+  }
+
+
+  onDrop = (key) => {
+    const { ongoing, completed, todos, draggedTodo, draggedTodoKey } = this.state;
+    let _ongoing = [...ongoing]
+    let _completed = [...completed]
+    let _todos = [...todos]
+
+    switch (key) {
+      case 'todos':
+        _todos = [...todos, draggedTodo]
+        break;
+      case 'ongoing':
+        _ongoing = [...ongoing, draggedTodo]
+        break;
+      case 'completed':
+        _completed = [...completed, draggedTodo]
+        break;
+
+      default:
+        break;
+    }
+
+    switch (draggedTodoKey) {
+      case 'todos':
+        _todos = todos.filter(t => t.id !== draggedTodo.id)
+        break;
+      case 'ongoing':
+        _ongoing = ongoing.filter(t => t.id !== draggedTodo.id)
+        break;
+      case 'completed':
+        _completed = completed.filter(t => t.id !== draggedTodo.id)
+        break;
+
+      default:
+        break;
+    }
+
+    this.setState({
+      completed: _completed,
+      todos: _todos,
+      ongoing: _ongoing,
+      draggedTodoKey: '',
+      draggedTodo: {},
+    })
+  }
 
   render() {
-    const { mouseY, isPressed, originalPosOfLastPressed, order } = this.state;
-
+    const { todos, completed, ongoing } = this.state;
     return (
-      <div className="demo8">
-        {range(itemsCount).map(i => {
-          const style = originalPosOfLastPressed === i && isPressed
-            ? {
-              scale: spring(1.1, springConfig),
-              shadow: spring(16, springConfig),
-              y: mouseY,
-            }
-            : {
-              scale: spring(1, springConfig),
-              shadow: spring(1, springConfig),
-              y: spring(order.indexOf(i) * 100, springConfig),
-            };
-          return (
-            <Motion style={style} key={i}>
-              {({ scale, shadow, y }) =>
-                <div
-                  onMouseDown={this.handleMouseDown.bind(null, i, y)}
-                  onTouchStart={this.handleTouchStart.bind(null, i, y)}
-                  className="demo8-item"
-                  style={{
-                    boxShadow: `rgba(0, 0, 0, 0.2) 0px ${shadow}px ${2 * shadow}px 0px`,
-                    transform: `translate3d(0, ${y}px, 0) scale(${scale})`,
-                    WebkitTransform: `translate3d(0, ${y}px, 0) scale(${scale})`,
-                    zIndex: i === originalPosOfLastPressed ? 99 : i,
-                  }}>
-                  {order.indexOf(i) + 1}
-                </div>
-              }
-            </Motion>
-          );
-        })}
+      <div class="flex px-4 pb-8 items-start overflow-x-scroll">
+        <div
+          onDrop={event => this.onDrop('todos')}
+          onDragOver={(event => this.onDragOver(event))}
+          class="rounded bg-grey-light flex-no-shrink w-64 p-2 mr-3"
+        >
+          <div class="flex justify-between py-1">
+            <h3 class="ml-1 text-sm">Todo</h3>
+            <svg class="h-4 fill-current text-grey-dark cursor-pointer" xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24">
+              <path
+                d="M5 10a1.999 1.999 0 1 0 0 4 1.999 1.999 0 1 0 0-4zm7 0a1.999 1.999 0 1 0 0 4 1.999 1.999 0 1 0 0-4zm7 0a1.999 1.999 0 1 0 0 4 1.999 1.999 0 1 0 0-4z" />
+            </svg>
+          </div>
+          {
+            todos.map((todo, idx) => (
+              <Card
+                todo={todo}
+                onDrag={(event) => this.onDrag(event, todo, 'todos')}
+                key={`todos-${todo.id}`}
+              />
+            )
+            )
+          }
+        </div>
+        <div
+          onDrop={event => this.onDrop('ongoing')}
+          onDragOver={(event => this.onDragOver(event))}
+          class="rounded bg-grey-light flex-no-shrink w-64 p-2 mr-3"
+        >
+          <div class="flex justify-between py-1">
+            <h3 class="ml-1 text-sm">Ongoing</h3>
+            <svg class="h-4 fill-current text-grey-dark cursor-pointer" xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24">
+              <path
+                d="M5 10a1.999 1.999 0 1 0 0 4 1.999 1.999 0 1 0 0-4zm7 0a1.999 1.999 0 1 0 0 4 1.999 1.999 0 1 0 0-4zm7 0a1.999 1.999 0 1 0 0 4 1.999 1.999 0 1 0 0-4z" />
+            </svg>
+          </div>
+          {
+            ongoing.map((todo, idx) =>
+              <Card
+                todo={todo}
+                onDrag={(event) => this.onDrag(event, todo, 'ongoing')}
+                key={`ongoing-${todo.id}`}
+              />
+            )
+          }
+        </div>
+        <div
+          onDrop={event => this.onDrop('completed')}
+          onDragOver={(event => this.onDragOver(event))}
+          class="rounded bg-grey-light flex-no-shrink w-64 p-2 mr-3"
+        >
+          <div class="flex justify-between py-1">
+            <h3 class="ml-1 text-sm">Ongoing</h3>
+            <svg class="h-4 fill-current text-grey-dark cursor-pointer" xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24">
+              <path
+                d="M5 10a1.999 1.999 0 1 0 0 4 1.999 1.999 0 1 0 0-4zm7 0a1.999 1.999 0 1 0 0 4 1.999 1.999 0 1 0 0-4zm7 0a1.999 1.999 0 1 0 0 4 1.999 1.999 0 1 0 0-4z" />
+            </svg>
+          </div>
+          {
+            completed.map((todo, idx) =>
+              <Card
+                todo={todo}
+                onDrag={(event) => this.onDrag(event, todo, 'completed')}
+                key={`completed-${todo.id}`}
+              />
+            )
+          }
+        </div>
       </div>
     );
-  };
+  }
 }
+export default CardList
