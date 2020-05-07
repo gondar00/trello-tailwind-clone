@@ -1,4 +1,5 @@
 import React from 'react';
+import Header from './card-list-header'
 import Card from './card'
 
 class CardList extends React.Component {
@@ -95,14 +96,7 @@ class CardList extends React.Component {
           onDragOver={(event => this.onDragOver(event))}
           class="rounded bg-grey-light flex-no-shrink w-64 p-2 mr-3"
         >
-          <div class="flex justify-between py-1">
-            <h3 class="ml-1 text-sm">Todo</h3>
-            <svg class="h-4 fill-current text-grey-dark cursor-pointer" xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24">
-              <path
-                d="M5 10a1.999 1.999 0 1 0 0 4 1.999 1.999 0 1 0 0-4zm7 0a1.999 1.999 0 1 0 0 4 1.999 1.999 0 1 0 0-4zm7 0a1.999 1.999 0 1 0 0 4 1.999 1.999 0 1 0 0-4z" />
-            </svg>
-          </div>
+          <Header title='Todo' />
           {
             todos.map((todo, idx) => (
               <Card
@@ -119,14 +113,7 @@ class CardList extends React.Component {
           onDragOver={(event => this.onDragOver(event))}
           class="rounded bg-grey-light flex-no-shrink w-64 p-2 mr-3"
         >
-          <div class="flex justify-between py-1">
-            <h3 class="ml-1 text-sm">Ongoing</h3>
-            <svg class="h-4 fill-current text-grey-dark cursor-pointer" xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24">
-              <path
-                d="M5 10a1.999 1.999 0 1 0 0 4 1.999 1.999 0 1 0 0-4zm7 0a1.999 1.999 0 1 0 0 4 1.999 1.999 0 1 0 0-4zm7 0a1.999 1.999 0 1 0 0 4 1.999 1.999 0 1 0 0-4z" />
-            </svg>
-          </div>
+          <Header title='Ongoing' />
           {
             ongoing.map((todo, idx) =>
               <Card
@@ -142,14 +129,7 @@ class CardList extends React.Component {
           onDragOver={(event => this.onDragOver(event))}
           class="rounded bg-grey-light flex-no-shrink w-64 p-2 mr-3"
         >
-          <div class="flex justify-between py-1">
-            <h3 class="ml-1 text-sm">Ongoing</h3>
-            <svg class="h-4 fill-current text-grey-dark cursor-pointer" xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24">
-              <path
-                d="M5 10a1.999 1.999 0 1 0 0 4 1.999 1.999 0 1 0 0-4zm7 0a1.999 1.999 0 1 0 0 4 1.999 1.999 0 1 0 0-4zm7 0a1.999 1.999 0 1 0 0 4 1.999 1.999 0 1 0 0-4z" />
-            </svg>
-          </div>
+          <Header title='Completed' />
           {
             completed.map((todo, idx) =>
               <Card
