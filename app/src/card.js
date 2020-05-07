@@ -1,9 +1,9 @@
 import React from 'react'
 
-export default ({ id, todo, onDrag }) => (
+export default ({ id, todo, onDrag, onChange }) => (
   <div onDrag={(event) => onDrag(event, todo, 'todos')} draggable id={id} className='text-sm mt-2'>
     <div className='bg-white p-2 rounded mt-1 border-b border-grey cursor-pointer hover:bg-grey-lighter'>
-      {todo.task}
+      <input autoFocus value={todo.task} onChange={onChange} />
       <div className='text-grey-darker mt-8 ml-2 flex justify-between items-start'>
         <span className='text-xs flex items-center'>
           <svg className='h-4 fill-current mr-1' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 50'>

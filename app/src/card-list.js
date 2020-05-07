@@ -24,6 +24,7 @@ class CardList extends React.Component {
           task: 'Todo-1'
         }
       ],
+      trash: [],
       draggedTodoKey: '',
       draggedTodo: {}
     }
@@ -43,10 +44,11 @@ class CardList extends React.Component {
 
 
   onDrop = (key) => {
-    const { ongoing, completed, todos, draggedTodo, draggedTodoKey } = this.state;
+    const { ongoing, completed, todos, trash, draggedTodo, draggedTodoKey } = this.state;
     let _ongoing = [...ongoing]
     let _completed = [...completed]
     let _todos = [...todos]
+    let _trash = [...trash]
 
     switch (key) {
       case 'todos':
@@ -57,6 +59,9 @@ class CardList extends React.Component {
         break;
       case 'completed':
         _completed = [...completed, draggedTodo]
+        break;
+      case 'trash':
+        _trash = [...trash, draggedTodo]
         break;
 
       default:
@@ -73,6 +78,9 @@ class CardList extends React.Component {
       case 'completed':
         _completed = completed.filter(t => t.id !== draggedTodo.id)
         break;
+      case 'trash':
+        _trash = trash.filter(t => t.id !== draggedTodo.id)
+        break;
 
       default:
         break;
@@ -82,6 +90,7 @@ class CardList extends React.Component {
       completed: _completed,
       todos: _todos,
       ongoing: _ongoing,
+      trash: _trash,
       draggedTodoKey: '',
       draggedTodo: {},
     })
@@ -101,8 +110,9 @@ class CardList extends React.Component {
     })
   }
 
-  render() {
-    const { todos, completed, ongoing } = this.state;
+  getData = () => {
+    const { todos, completed, ongoing, trash } = this.state;
+
     const data = [{
       name: 'todos',
       value: todos
@@ -114,10 +124,30 @@ class CardList extends React.Component {
       value: completed
     }]
 
+    if(this.state.draggedTodoKey) return [...data, { name: 'trash', value: trash }]
+
+    return data
+  }
+
+  onEdit = (e, key, index) => {
+    const todos = [...this.state[key]]
+    const todo = this.state[key][index]
+    const newTodo = {
+      ...todo,
+      task: e.target.value
+    }
+    todos.splice(index, 1, newTodo)
+
+    this.setState({
+      [key]: todos
+    })
+  }
+
+  render() {
     return (
       <div className="flex px-4 pb-8 items-start overflow-x-scroll">
         {
-          data.map(({ name, value }) => (
+          this.getData().map(({ name, value }) => (
             <div
               key={name}
               onDrop={event => this.onDrop(name)}
@@ -130,6 +160,7 @@ class CardList extends React.Component {
                   <Card
                     key={idx}
                     todo={todo}
+                    onChange={(event) => this.onEdit(event, name, idx)}
                     onDrag={(event) => this.onDrag(event, todo, name)}
                     id={`${name}-${todo.id}`}
                   />
