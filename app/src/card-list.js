@@ -89,59 +89,41 @@ class CardList extends React.Component {
 
   render() {
     const { todos, completed, ongoing } = this.state;
+    const data = [{
+      name: 'todos',
+      value: todos
+    }, {
+      name: 'ongoing',
+      value: ongoing
+    }, {
+      name: 'completed',
+      value: completed
+    }]
+
     return (
       <div class="flex px-4 pb-8 items-start overflow-x-scroll">
-        <div
-          onDrop={event => this.onDrop('todos')}
-          onDragOver={(event => this.onDragOver(event))}
-          class="rounded bg-grey-light flex-no-shrink w-64 p-2 mr-3"
-        >
-          <Header title='Todo' />
-          {
-            todos.map((todo, idx) => (
-              <Card
-                todo={todo}
-                onDrag={(event) => this.onDrag(event, todo, 'todos')}
-                key={`todos-${todo.id}`}
-              />
-            )
-            )
-          }
-        </div>
-        <div
-          onDrop={event => this.onDrop('ongoing')}
-          onDragOver={(event => this.onDragOver(event))}
-          class="rounded bg-grey-light flex-no-shrink w-64 p-2 mr-3"
-        >
-          <Header title='Ongoing' />
-          {
-            ongoing.map((todo, idx) =>
-              <Card
-                todo={todo}
-                onDrag={(event) => this.onDrag(event, todo, 'ongoing')}
-                key={`ongoing-${todo.id}`}
-              />
-            )
-          }
-        </div>
-        <div
-          onDrop={event => this.onDrop('completed')}
-          onDragOver={(event => this.onDragOver(event))}
-          class="rounded bg-grey-light flex-no-shrink w-64 p-2 mr-3"
-        >
-          <Header title='Completed' />
-          {
-            completed.map((todo, idx) =>
-              <Card
-                todo={todo}
-                onDrag={(event) => this.onDrag(event, todo, 'completed')}
-                key={`completed-${todo.id}`}
-              />
-            )
-          }
-        </div>
+        {
+          data.map(({ name, value }) => (
+            <div
+              onDrop={event => this.onDrop(name)}
+              onDragOver={(event => this.onDragOver(event))}
+              class="rounded bg-grey-light flex-no-shrink w-64 p-2 mr-3"
+            >
+              <Header title={name} />
+              {
+                value.map((todo) => (
+                  <Card
+                    todo={todo}
+                    onDrag={(event) => this.onDrag(event, todo, name)}
+                    key={`${name}-${todo.id}`}
+                  />
+                ))
+              }
+            </div>
+          ))
+        }
       </div>
-    );
+    )
   }
 }
 export default CardList
