@@ -15,13 +15,13 @@ class CardList extends React.Component {
       ongoing: [
         {
           id: 2,
-          task: 'Todo-2'
+          task: 'Todo-1'
         }
       ],
       completed: [
         {
           id: 3,
-          task: 'Todo-3'
+          task: 'Todo-1'
         }
       ],
       draggedTodoKey: '',
@@ -87,6 +87,20 @@ class CardList extends React.Component {
     })
   }
 
+  onAdd = (event, key) => {
+    event.preventDefault()
+    const cards = this.state[key]
+    const size = cards.length + 1
+    const card = {
+      id: size,
+      task: `Todo-${size}`
+    }
+
+    this.setState({
+      [key]: [...cards, card]
+    })
+  }
+
   render() {
     const { todos, completed, ongoing } = this.state;
     const data = [{
@@ -101,24 +115,27 @@ class CardList extends React.Component {
     }]
 
     return (
-      <div class="flex px-4 pb-8 items-start overflow-x-scroll">
+      <div className="flex px-4 pb-8 items-start overflow-x-scroll">
         {
           data.map(({ name, value }) => (
             <div
+              key={name}
               onDrop={event => this.onDrop(name)}
               onDragOver={(event => this.onDragOver(event))}
-              class="rounded bg-grey-light flex-no-shrink w-64 p-2 mr-3"
+              className="rounded bg-grey-light flex-no-shrink w-64 p-2 mr-3"
             >
               <Header title={name} />
               {
-                value.map((todo) => (
+                value.map((todo, idx) => (
                   <Card
+                    key={idx}
                     todo={todo}
                     onDrag={(event) => this.onDrag(event, todo, name)}
-                    key={`${name}-${todo.id}`}
+                    id={`${name}-${todo.id}`}
                   />
                 ))
               }
+              <p onClick={event => this.onAdd(event, name)} className='mt-8 p-2 pl-0 text-grey-dark cursor-pointer'>Add a card...</p>
             </div>
           ))
         }

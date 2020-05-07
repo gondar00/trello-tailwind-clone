@@ -1,7 +1,7 @@
 import React from 'react'
 
-export default ({ key, todo, onDrag }) => (
-  <div onDrag={(event) => onDrag(event, todo, 'todos')} draggable key={key} className='text-sm mt-2'>
+export default ({ id, todo, onDrag }) => (
+  <div onDrag={(event) => onDrag(event, todo, 'todos')} draggable id={id} className='text-sm mt-2'>
     <div className='bg-white p-2 rounded mt-1 border-b border-grey cursor-pointer hover:bg-grey-lighter'>
       {todo.task}
       <div className='text-grey-darker mt-8 ml-2 flex justify-between items-start'>
@@ -19,6 +19,5 @@ export default ({ key, todo, onDrag }) => (
         />
       </div>
     </div>
-    {/* <p className='mt-8 p-2 pl-0 text-grey-dark'>Add a card...</p> */}
   </div>
 )

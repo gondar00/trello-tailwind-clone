@@ -1,10 +1,10 @@
 import React from 'react'
 
 export default ({ title }) => (
-  <div class='flex justify-between py-1'>
-    <h3 class='ml-1 text-sm'>{title}</h3>
+  <div className='flex justify-between py-1'>
+    <h3 className='ml-1 text-sm'>{title}</h3>
     <svg
-      class='h-4 fill-current text-grey-dark cursor-pointer' xmlns='http://www.w3.org/2000/svg'
+      className='h-4 fill-current text-grey-dark cursor-pointer' xmlns='http://www.w3.org/2000/svg'
       viewBox='0 0 24 24'
     >
       <path
